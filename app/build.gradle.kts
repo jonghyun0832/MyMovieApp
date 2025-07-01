@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -20,6 +22,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            isDebuggable = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -50,8 +55,24 @@ dependencies {
     implementation(libs.navigation.dynamic.features)
     implementation(libs.navigation.compose)
 
+    //hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.adapter)
+    implementation(libs.retrofit.logging)
+
+    //gson
+    implementation(libs.gson)
+
+    //timber
+    implementation(libs.timber)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
