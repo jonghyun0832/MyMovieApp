@@ -19,30 +19,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.example.mymovieapp.R
+import com.example.mymovieapp.features.common.entity.MovieDetailEntity
+import com.example.mymovieapp.features.common.entity.MovieFeedItemEntity
+import com.example.mymovieapp.features.feed.presentation.input.IFeedViewModelInput
+import com.example.mymovieapp.features.feed.presentation.viewmodel.FeedViewModel
 import com.example.mymovieapp.ui.theme.Paddings
 
 private val CARD_WIDTH = 150.dp
 private val ICON_SIZE = 12.dp
 
 @Composable
-fun MovieItem() {
+fun MovieItem(
+    movie: MovieFeedItemEntity,
+    input: IFeedViewModelInput
+) {
     Column(
         modifier = Modifier
             .width(CARD_WIDTH)
             .padding(Paddings.large)
     ) {
         Poster(
-            modifier = Modifier
-                .width(CARD_WIDTH)
+            movie = movie,
+            input = input
         )
 
         Text(
-            text = "The Lord the Ring 1",
+            text = movie.title,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(
@@ -68,7 +80,7 @@ fun MovieItem() {
                 contentDescription = "Rating"
             )
             Text(
-                text = "5.0",
+                text = "${movie.rating}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -77,23 +89,29 @@ fun MovieItem() {
 
 @Composable
 fun Poster(
-    modifier: Modifier
+    movie: MovieFeedItemEntity,
+    input: IFeedViewModelInput
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
+        onClick = {
+            input.openDetail(movie.title)
+        }
     ) {
-        Box(
-            modifier = Modifier.background(
-                color = Color.Blue
-            )
+        Image(
+            painter = rememberAsyncImagePainter(
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(data = movie.thumbUrl)
+                    .apply {
+                        crossfade(true)
+                        scale(Scale.FILL)
+                    }.build(),
+            ),
+            modifier = Modifier
+                .width(CARD_WIDTH)
+                .height(200.dp),
+            contentScale = ContentScale.FillHeight,
+            contentDescription = "Movie Poster Image"
         )
     }
-}
-
-@Preview
-@Composable
-fun MovieItemPreview() {
-    MovieItem()
 }
