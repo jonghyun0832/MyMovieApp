@@ -1,6 +1,7 @@
 package com.example.mymovieapp.features.detail
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -47,6 +48,7 @@ import com.example.mymovieapp.features.detail.presentation.input.IDetailViewMode
 import com.example.mymovieapp.features.detail.presentation.output.DetailUiEffect
 import com.example.mymovieapp.features.detail.presentation.output.MovieDetailState
 import com.example.mymovieapp.features.detail.presentation.viewmodel.MovieDetailViewModel
+import com.example.mymovieapp.features.dialogs.IMDBDialogScreen
 import com.example.mymovieapp.features.dialogs.RatingDialogScreen
 import com.example.mymovieapp.features.feed.presentation.output.FeedUiEffect
 import com.example.mymovieapp.ui.components.buttons.PrimaryButton
@@ -60,11 +62,15 @@ import kotlinx.coroutines.flow.collectLatest
 fun DetailScreen(
     movieName: String,
     navController: NavController,
+    openUrl: (String) -> Unit,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
     var showRatingDialog by remember { mutableStateOf(false) }
     var ratingDialogTitle by remember { mutableStateOf("") }
     var ratingDialogScore by remember { mutableStateOf(0f) }
+
+    var showIMDBDialog by remember { mutableStateOf(false) }
+    var url by remember { mutableStateOf("") }
 
     LaunchedEffect(movieName) {
         viewModel.initMovieName(movieName)
@@ -84,8 +90,8 @@ fun DetailScreen(
                 }
 
                 is DetailUiEffect.OpenUrl -> {
-                    val encodedUrl = Uri.encode(effect.url)
-                    navController.navigate("imdbDialog/$encodedUrl")
+                    showIMDBDialog = true
+                    url = effect.url
                 }
             }
         }
@@ -107,6 +113,17 @@ fun DetailScreen(
             action = {},
             onDismiss = {
                 showRatingDialog = false
+            }
+        )
+    }
+
+    if (showIMDBDialog) {
+        IMDBDialogScreen(
+            action = {
+                openUrl(url)
+            },
+            onDismiss = {
+                showIMDBDialog = false
             }
         )
     }

@@ -49,30 +49,21 @@ class MainActivity : AppCompatActivity() {
                     }
                     composable("detail/{movieName}") { navBackStackEntry ->
                         val movieName = navBackStackEntry.arguments?.getString("movieName") ?: ""
-                        DetailScreen(movieName, navController)
-                    }
-                    composable("info") {
-                        FeedScreen(navController)
-                    }
-                    composable(
-                        route = "imdbDialog/{url}",
-                        arguments = listOf(
-                            navArgument("url") { type = NavType.StringType }
-                        )
-                    ) { navBackStackEntry ->
-                        val encodedUrl = navBackStackEntry.arguments?.getString("url") ?: ""
-                        val url = Uri.decode(encodedUrl)
-                        IMDBDialogScreen(
-                            action = {
+                        DetailScreen(
+                            movieName = movieName,
+                            navController = navController,
+                            openUrl = { url ->
                                 startActivity(
                                     Intent(
                                         Intent.ACTION_VIEW,
                                         Uri.parse(IMDB_BASE_URL + url)
                                     )
                                 )
-                            },
-                            onDismiss = { navController.popBackStack() }
+                            }
                         )
+                    }
+                    composable("info") {
+                        FeedScreen(navController)
                     }
                 }
             }

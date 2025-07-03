@@ -19,7 +19,7 @@ fun IMDBDialogScreen(
 ) {
 
 //    val themeViewModel: ThemeViewModel = hiltViewModel()
-    MyMovieAppTheme() {
+    ControlledDismissDialog(onDismiss) {
         DialogPopup.Default(
             title = stringResource(R.string.imdb_title),
             bodyText = stringResource(R.string.imdb_message),
@@ -35,48 +35,3 @@ fun IMDBDialogScreen(
         )
     }
 }
-//
-//@AndroidEntryPoint
-//class IMDBDialogFragment : BaseDialogFragment() {
-//
-//    private val args: IMDBDialogFragmentArgs by navArgs()
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View {
-//        dialog?.apply {
-//            isCancelable = true
-//            setCanceledOnTouchOutside(true)
-//            window?.setBackgroundDrawable(ColorDrawable(requireContext().getColor(android.R.color.transparent)))
-//        }
-//
-//        return ComposeView(requireContext()).apply {
-//            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-//            setContent {
-//                MovieAppTheme(
-//                    themeState = themeViewModel.themeState.collectAsState()
-//                ) {
-//                    DialogPopup.Default(
-//                        title = stringResource(R.string.imdb_title),
-//                        bodyText = stringResource(R.string.imdb_message),
-//                        buttons = listOf(
-//                            DialogButton.Primary(getString(R.string.open)) {
-//                                startActivity(
-//                                    Intent(
-//                                        Intent.ACTION_VIEW,
-//                                        Uri.parse(IMDB_BASE_URL + args.url)
-//                                    )
-//                                )
-//                            },
-//                            DialogButton.SecondaryBorderless(getString(R.string.cancel)) {
-//                                dismiss()
-//                            }
-//                        )
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
