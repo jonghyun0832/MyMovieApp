@@ -65,13 +65,6 @@ fun DetailScreen(
     openUrl: (String) -> Unit,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
-    var showRatingDialog by remember { mutableStateOf(false) }
-    var ratingDialogTitle by remember { mutableStateOf("") }
-    var ratingDialogScore by remember { mutableStateOf(0f) }
-
-    var showIMDBDialog by remember { mutableStateOf(false) }
-    var url by remember { mutableStateOf("") }
-
     LaunchedEffect(movieName) {
         viewModel.initMovieName(movieName)
     }
@@ -82,22 +75,13 @@ fun DetailScreen(
                 is DetailUiEffect.Back -> {
                     navController.navigateUp()
                 }
-
-                is DetailUiEffect.RateMovie -> {
-                    showRatingDialog = true
-                    ratingDialogTitle = effect.movieTitle
-                    ratingDialogScore = effect.rating
-                }
-
-                is DetailUiEffect.OpenUrl -> {
-                    showIMDBDialog = true
-                    url = effect.url
-                }
             }
         }
     }
 
     val movieDetail by viewModel.outputs.detailState.collectAsState()
+    val showRatingDialog by viewModel.outputs.ratingDialogState.collectAsState()
+    val showIMDBDialog by viewModel.outputs.imdbDialogState.collectAsState()
 
     if (movieDetail is MovieDetailState.Main) {
         MovieDetail(
@@ -106,24 +90,24 @@ fun DetailScreen(
         )
     }
 
-    if (showRatingDialog) {
+    showRatingDialog?.let { state ->
         RatingDialogScreen(
-            movieName = ratingDialogTitle,
-            rating = ratingDialogScore,
+            movieName = state.movieTitle,
+            rating = state.rating,
             action = {},
             onDismiss = {
-                showRatingDialog = false
+                viewModel.dismissRatingDialog()
             }
         )
     }
 
-    if (showIMDBDialog) {
+    showIMDBDialog?.let { state ->
         IMDBDialogScreen(
             action = {
-                openUrl(url)
+                openUrl(state.url)
             },
             onDismiss = {
-                showIMDBDialog = false
+                viewModel.dismissImdbDialog()
             }
         )
     }
