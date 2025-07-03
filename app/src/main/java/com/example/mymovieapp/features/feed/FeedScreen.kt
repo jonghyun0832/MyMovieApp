@@ -25,8 +25,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,12 +41,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.mymovieapp.R
 import com.example.mymovieapp.features.feed.presentation.input.IFeedViewModelInput
 import com.example.mymovieapp.features.feed.presentation.output.FeedState
+import com.example.mymovieapp.features.feed.presentation.output.FeedUiEffect
 import com.example.mymovieapp.features.feed.presentation.viewmodel.FeedViewModel
 import com.example.mymovieapp.ui.components.movie.CategoryRow
+import com.example.mymovieapp.ui.navigation.safeNavigate
 import com.example.mymovieapp.ui.theme.Paddings
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 val COMMON_HORIZONTAL_PADDING = Paddings.medium
@@ -57,8 +63,23 @@ fun FeedScreen(
 //    input: IFeedViewModelInput,
 //    buttonColor: State<Color>,
 //    changeAppColor: () -> Unit,
+    navController: NavController,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.feedUiEffect.collectLatest { effect ->
+            when (effect) {
+                is FeedUiEffect.OpenMovieDetail -> {
+                    navController.navigate("detail/${effect.movieName}")
+                }
+
+                is FeedUiEffect.OpenInfoDialog -> {
+                    navController.navigate("info")
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
