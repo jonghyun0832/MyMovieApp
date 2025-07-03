@@ -59,7 +59,7 @@ fun FeedScreen(
     navController: NavController,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
-    val infoDialogState by viewModel.infoDialogState.collectAsState()
+    val infoDialogState by viewModel.output.feedInfoDialogState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.feedUiEffect.collectLatest { effect ->

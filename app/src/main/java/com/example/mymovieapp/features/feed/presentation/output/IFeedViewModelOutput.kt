@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface IFeedViewModelOutput {
     val feedState: StateFlow<FeedState>
+    val feedInfoDialogState: StateFlow<Boolean>
     val feedUiEffect: SharedFlow<FeedUiEffect>
 }
 

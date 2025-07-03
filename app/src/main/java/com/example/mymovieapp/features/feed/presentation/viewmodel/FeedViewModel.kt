@@ -29,12 +29,14 @@ class FeedViewModel @Inject constructor(
     private val _feedState: MutableStateFlow<FeedState> = MutableStateFlow(FeedState.Loading)
     override val feedState: StateFlow<FeedState> get() = _feedState
 
+    private val _feedInfoDialogState: MutableStateFlow<Boolean> =
+        MutableStateFlow(false)
+    override val feedInfoDialogState: StateFlow<Boolean>
+        get() = _feedInfoDialogState
+
     // 유저로부터 입력을 받아서 Fragment단에서 액션을 수행하기 위한 Flow
     private val _feedUiEffect = MutableSharedFlow<FeedUiEffect>(replay = 0)
     override val feedUiEffect: SharedFlow<FeedUiEffect> get() = _feedUiEffect
-
-    private val _infoDialogState = MutableStateFlow<Boolean>(false)
-    val infoDialogState: StateFlow<Boolean> get() = _infoDialogState
 
     init {
         fetchFeed()
@@ -61,7 +63,7 @@ class FeedViewModel @Inject constructor(
     }
 
     fun dismissInfoDialog() {
-        _infoDialogState.value = false
+        _feedInfoDialogState.value = false
     }
 
     override fun openDetail(movieName: String) {
@@ -73,7 +75,7 @@ class FeedViewModel @Inject constructor(
     }
 
     override fun openInfoDialog() {
-        _infoDialogState.value = true
+        _feedInfoDialogState.value = true
     }
 
     override fun refreshFeed() {
