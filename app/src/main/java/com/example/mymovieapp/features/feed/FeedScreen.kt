@@ -2,7 +2,6 @@ package com.example.mymovieapp.features.feed
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,31 +23,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mymovieapp.R
+import com.example.mymovieapp.features.dialogs.InfoDialogScreen
 import com.example.mymovieapp.features.feed.presentation.input.IFeedViewModelInput
 import com.example.mymovieapp.features.feed.presentation.output.FeedState
 import com.example.mymovieapp.features.feed.presentation.output.FeedUiEffect
 import com.example.mymovieapp.features.feed.presentation.viewmodel.FeedViewModel
 import com.example.mymovieapp.ui.components.movie.CategoryRow
-import com.example.mymovieapp.ui.navigation.safeNavigate
 import com.example.mymovieapp.ui.theme.Paddings
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -59,22 +56,16 @@ val COMMON_HORIZONTAL_PADDING = Paddings.medium
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FeedScreen(
-//    feedStateHolder: State<FeedState>,
-//    input: IFeedViewModelInput,
-//    buttonColor: State<Color>,
-//    changeAppColor: () -> Unit,
     navController: NavController,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
+    val infoDialogState by viewModel.infoDialogState.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.feedUiEffect.collectLatest { effect ->
             when (effect) {
                 is FeedUiEffect.OpenMovieDetail -> {
                     navController.navigate("detail/${effect.movieName}")
-                }
-
-                is FeedUiEffect.OpenInfoDialog -> {
-                    navController.navigate("info")
                 }
             }
         }
@@ -84,7 +75,6 @@ fun FeedScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .requiredHeight(70.dp),
                 title = {
                     Text(
@@ -95,10 +85,15 @@ fun FeedScreen(
                         style = MaterialTheme.typography.displayMedium
                     )
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 actions = {
-//                    AppBarMenu(
-//
-//                    )
+                    AppBarMenu(
+                        viewModel.input
+                    )
                 }
             )
         }
@@ -107,13 +102,17 @@ fun FeedScreen(
             feedState = viewModel.output.feedState.collectAsState().value,
             input = viewModel.input
         )
+
+        if (infoDialogState) {
+            InfoDialogScreen { viewModel.dismissInfoDialog() }
+        }
     }
 }
 
 @Composable
 fun AppBarMenu(
-    btnColor: Color,
-    changeAppColor: () -> Unit,
+//    btnColor: Color,
+//    changeAppColor: () -> Unit,
     input: IFeedViewModelInput
 ) {
     Row(
@@ -123,14 +122,14 @@ fun AppBarMenu(
     ) {
         IconButton(
             onClick = {
-                changeAppColor()
+//                changeAppColor()
             }
         ) {
             Box(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(color = btnColor)
+//                    .background(color = btnColor)
             )
         }
 
@@ -165,11 +164,6 @@ fun BodyContent(
             }
         }
 
-        // 일단할거 정리좀하자 오늘
-        // 일단 남은 강의 3개 클리어
-        // 이력서 어떻게 수정할지 고민좀 해보자
-        // 코딩테스트는 어느정도 준비된거같긴한데, 그래도 준비 좀 더 하긴해야함
-
         is FeedState.Main -> {
             Timber.d("MoviesScreen: Success")
             LazyColumn(
@@ -192,6 +186,8 @@ fun BodyContent(
             )
         }
     }
+
+
 }
 
 val IMAGE_SIZE = 48.dp

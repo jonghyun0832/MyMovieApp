@@ -10,5 +10,4 @@ interface IFeedViewModelOutput {
 
 sealed class FeedUiEffect {
     data class OpenMovieDetail(val movieName: String): FeedUiEffect()
-    data object OpenInfoDialog: FeedUiEffect()
 }
