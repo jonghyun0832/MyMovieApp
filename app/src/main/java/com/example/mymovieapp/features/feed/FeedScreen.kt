@@ -2,6 +2,7 @@ package com.example.mymovieapp.features.feed
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,11 +27,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,8 +61,11 @@ val COMMON_HORIZONTAL_PADDING = Paddings.medium
 @Composable
 fun FeedScreen(
     navController: NavController,
+    buttonColor: State<Color>,
+    changeAppColor: () -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
 ) {
+    val btnColor by remember { buttonColor }
     val infoDialogState by viewModel.output.feedInfoDialogState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -92,7 +99,9 @@ fun FeedScreen(
                 ),
                 actions = {
                     AppBarMenu(
-                        viewModel.input
+                        btnColor = btnColor,
+                        changeAppColor = changeAppColor,
+                        input = viewModel.input
                     )
                 }
             )
@@ -111,8 +120,8 @@ fun FeedScreen(
 
 @Composable
 fun AppBarMenu(
-//    btnColor: Color,
-//    changeAppColor: () -> Unit,
+    btnColor: Color,
+    changeAppColor: () -> Unit,
     input: IFeedViewModelInput
 ) {
     Row(
@@ -122,14 +131,14 @@ fun AppBarMenu(
     ) {
         IconButton(
             onClick = {
-//                changeAppColor()
+                changeAppColor()
             }
         ) {
             Box(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-//                    .background(color = btnColor)
+                    .background(color = btnColor)
             )
         }
 

@@ -9,34 +9,37 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import com.example.mymovieapp.ui.theme.color.ColorSet
-import com.example.mymovieapp.ui.theme.color.MyColors
+import com.example.mymovieapp.ui.config.ComponentConfig
+import com.example.mymovieapp.ui.config.DefaultComponentConfig
 
 @Composable
 fun MyMovieAppTheme(
-    myColors: ColorSet = ColorSet.Red,
-    typography: Typography = Typography,
-    shapes: Shapes = Shapes,
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
+    themeState: State<ComponentConfig> = mutableStateOf(
+        DefaultComponentConfig.RED_THEME
+    ),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val myTheme by remember { themeState }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (myTheme.isDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> myColors.DarkColors.material
-        else -> myColors.LightColors.material
+        else -> myTheme.colors.LightColors.material
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography,
-        shapes = shapes,
+        typography = myTheme.typography,
+        shapes = myTheme.shapes,
         content = content
     )
 }
