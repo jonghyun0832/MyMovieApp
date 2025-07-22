@@ -18,7 +18,4 @@ object DefaultComponentConfig {
         typography = Typography,
         isDarkTheme = false
     )
-
-    private var currentConfig = RED_THEME
-    private var themeColorSet: ColorSet = ColorSet.Red
 }

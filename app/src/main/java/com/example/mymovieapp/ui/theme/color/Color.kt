@@ -22,12 +22,12 @@ val Grey900 = Color(0xFF151515)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 
-sealed class ColorSet {
-    open lateinit var LightColors: MyColors
-    open lateinit var DarkColors: MyColors
-
-    data object Red : ColorSet() {
-        override var LightColors = MyColors(
+sealed class ColorSet(
+    val LightColors: MyColors,
+    val DarkColors: MyColors
+) {
+    data object Red : ColorSet(
+        LightColors = MyColors(
             material = lightColorScheme(
                 primary = Red700,
                 primaryContainer = Red800,
@@ -43,26 +43,25 @@ sealed class ColorSet {
             success = Green400,
             disabledSecondary = Grey200,
             textFiledBackground = Grey200
-        )
-
-        override var DarkColors = MyColors(
+        ),
+        DarkColors = MyColors(
             material = darkColorScheme(
                 primary = Purple900,
                 primaryContainer = Red800,
                 secondary = Purple900,
                 secondaryContainer = Purple700,
-                surface = White,
-                onSurface = Black,
-                background = White,
-                onBackground = Black,
+                surface = Black,
+                onSurface = White,
+                background = Black,
+                onBackground = White,
                 error = Red400,
                 onPrimary = White
             )
         )
-    }
+    )
 
-    object Blue : ColorSet() {
-        override var LightColors = MyColors(
+    data object Blue : ColorSet(
+        LightColors = MyColors(
             material = lightColorScheme(
                 primary = Blue400,
                 primaryContainer = Purple400,
@@ -78,21 +77,20 @@ sealed class ColorSet {
             success = Green400,
             disabledSecondary = Purple700,
             textFiledBackground = Grey200
-        )
-
-        override var DarkColors = MyColors(
+        ),
+        DarkColors = MyColors(
             material = darkColorScheme(
                 primary = Red900,
                 primaryContainer = Purple400,
                 secondary = Blue400,
                 secondaryContainer = Purple900,
-                surface = White,
-                onSurface = Purple900,
-                background = White,
-                onBackground = Purple900,
+                surface = Black,
+                onSurface = White,
+                background = Black,
+                onBackground = White,
                 error = Red400,
                 onPrimary = White
             )
         )
-    }
+    )
 }
